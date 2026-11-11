@@ -94,7 +94,11 @@ export interface Analysis {
 const MAX_ROUTES = 500;
 
 /** All simple routes between two nodes through hydraulic components. */
-export function findRoutes(layout: Layout, from: string, to: string): { nodeIds: string[]; edgeIds: string[] }[] {
+export function findRoutes(
+  layout: Layout,
+  from: string,
+  to: string,
+): { nodeIds: string[]; edgeIds: string[] }[] {
   const kindOf = new Map(layout.nodes.map((n) => [n.id, n.data.kind]));
   const adjacency = new Map<string, { edge: LayoutEdge; other: string }[]>();
   for (const e of layout.edges) {
@@ -205,12 +209,34 @@ export function analyse(layout: Layout, settings: AnalysisSettings = DEFAULT_SET
   const upper = uppers[0];
   const lower = lowers[0];
 
-  if (!upper) issue({ id: 'no-upper', severity: 'error', message: 'Place an upper reservoir at the surface.', termId: 'upperReservoir' });
-  if (!lower) issue({ id: 'no-lower', severity: 'error', message: 'Place a lower reservoir underground.', termId: 'lowerReservoir' });
+  if (!upper)
+    issue({
+      id: 'no-upper',
+      severity: 'error',
+      message: 'Place an upper reservoir at the surface.',
+      termId: 'upperReservoir',
+    });
+  if (!lower)
+    issue({
+      id: 'no-lower',
+      severity: 'error',
+      message: 'Place a lower reservoir underground.',
+      termId: 'lowerReservoir',
+    });
   if (uppers.length > 1)
-    issue({ id: 'many-upper', severity: 'warning', message: 'Only the first upper reservoir is used in the calculation.', nodeIds: uppers.slice(1).map((n) => n.id) });
+    issue({
+      id: 'many-upper',
+      severity: 'warning',
+      message: 'Only the first upper reservoir is used in the calculation.',
+      nodeIds: uppers.slice(1).map((n) => n.id),
+    });
   if (lowers.length > 1)
-    issue({ id: 'many-lower', severity: 'warning', message: 'Only the first lower reservoir is used in the calculation.', nodeIds: lowers.slice(1).map((n) => n.id) });
+    issue({
+      id: 'many-lower',
+      severity: 'warning',
+      message: 'Only the first lower reservoir is used in the calculation.',
+      nodeIds: lowers.slice(1).map((n) => n.id),
+    });
 
   const grossHead = upper && lower ? upper.elevation - lower.elevation : 0;
   if (upper && lower && grossHead <= 0)
@@ -248,7 +274,8 @@ export function analyse(layout: Layout, settings: AnalysisSettings = DEFAULT_SET
       issue({
         id: 'no-generate-route',
         severity: 'error',
-        message: 'Connect the reservoirs with pipes through a turbine or a reversible pump-turbine to generate power.',
+        message:
+          'Connect the reservoirs with pipes through a turbine or a reversible pump-turbine to generate power.',
         nodeIds: [upper.id, lower.id],
         termId: 'turbine',
       });
@@ -256,7 +283,8 @@ export function analyse(layout: Layout, settings: AnalysisSettings = DEFAULT_SET
       issue({
         id: 'no-pump-route',
         severity: 'warning',
-        message: 'There is no pumping route yet. Add a pump (or use a reversible unit) so water can be pumped back up.',
+        message:
+          'There is no pumping route yet. Add a pump (or use a reversible unit) so water can be pumped back up.',
         nodeIds: [routes.generate.machineId],
         termId: 'pumpMode',
       });
@@ -369,7 +397,8 @@ export function analyse(layout: Layout, settings: AnalysisSettings = DEFAULT_SET
       issue({
         id: 'no-transformer',
         severity: 'info',
-        message: 'Add a transformer & switchgear to connect to the mine grid. Until then, electrical losses and their cost are left out.',
+        message:
+          'Add a transformer & switchgear to connect to the mine grid. Until then, electrical losses and their cost are left out.',
         termId: 'transformer',
       });
   }
@@ -383,9 +412,16 @@ export function analyse(layout: Layout, settings: AnalysisSettings = DEFAULT_SET
   ]);
 
   // What each headline number depends on (for "explain this" highlighting)
-  const reservoirs: Dependency = { nodeIds: [upper?.id, lower?.id].filter((x): x is string => !!x), edgeIds: [] };
-  const genDep: Dependency = routes.generate ? { nodeIds: routes.generate.nodeIds, edgeIds: routes.generate.edgeIds } : emptyDep();
-  const pumpDep: Dependency = routes.pump ? { nodeIds: routes.pump.nodeIds, edgeIds: routes.pump.edgeIds } : emptyDep();
+  const reservoirs: Dependency = {
+    nodeIds: [upper?.id, lower?.id].filter((x): x is string => !!x),
+    edgeIds: [],
+  };
+  const genDep: Dependency = routes.generate
+    ? { nodeIds: routes.generate.nodeIds, edgeIds: routes.generate.edgeIds }
+    : emptyDep();
+  const pumpDep: Dependency = routes.pump
+    ? { nodeIds: routes.pump.nodeIds, edgeIds: routes.pump.edgeIds }
+    : emptyDep();
   const pipesOnly = (d: Dependency): Dependency => ({
     nodeIds: d.nodeIds.filter((id) => {
       const k = byId.get(id)?.data.kind;
@@ -402,7 +438,10 @@ export function analyse(layout: Layout, settings: AnalysisSettings = DEFAULT_SET
     power: merge(genDep, transformerDep),
     pumpPower: merge(pumpDep, transformerDep),
     roundTripEfficiency: merge(genDep, pumpDep, transformerDep, reservoirs),
-    duration: merge(reservoirs, routes.generate ? { nodeIds: [routes.generate.machineId], edgeIds: [] } : emptyDep()),
+    duration: merge(
+      reservoirs,
+      routes.generate ? { nodeIds: [routes.generate.machineId], edgeIds: [] } : emptyDep(),
+    ),
     capex: { nodeIds: layout.nodes.map((n) => n.id), edgeIds: layout.edges.map((e) => e.id) },
   };
 

@@ -1,0 +1,167 @@
+/* Design tokens. Light is the base; dark is selected (not inverted) for the dark surface. */
+:root {
+  color-scheme: light;
+  --font: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --bg: #f4f5f7;
+  --bg-grad: radial-gradient(1200px 600px at 85% -10%, #dbe8fb 0%, transparent 60%), #f4f5f7;
+  --panel: #ffffff;
+  --panel-2: #f8f9fb;
+  --panel-glass: rgb(255 255 255 / 0.82);
+  --border: #e2e6ed;
+  --border-strong: #cdd4df;
+  --text: #0e1624;
+  --text-2: #4a5568;
+  --muted: #74819a;
+  --focus: #2a78d6;
+  --shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 8px 24px -8px rgb(15 23 42 / 0.12);
+  --shadow-lg: 0 2px 4px rgb(15 23 42 / 0.06), 0 24px 48px -16px rgb(15 23 42 / 0.25);
+
+  /* Meaning */
+  --accent: #d98a00; /* energy / power / generate */
+  --accent-soft: #fdf1d8;
+  --pump: #6250d6; /* pumping */
+  --pump-soft: #ebe8fb;
+  --water: #2a78d6;
+  --water-hi: #4a9bf0;
+  --water-deep: #1c5cab;
+  --good: #0a8a0a;
+  --warn: #b77800;
+  --warn-soft: #fff4dc;
+  --crit: #c93232;
+  --crit-soft: #fdeaea;
+  --info-soft: #e8f1fd;
+
+  /* Chart series (validated reference palette, light steps) */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+
+  /* The mine */
+  --canvas-sky: linear-gradient(180deg, #e9f1fb 0%, #f6f8fb 100%);
+  --stratum-top: #e9e1d4;
+  --stratum-deep: #cfc3b1;
+  --rock-line: rgb(110 90 60 / 0.16);
+  --earth: #b9a487;
+  --grass: #7ba05b;
+  --shaft: #8c8273;
+  --shaft-edge: #6c6355;
+  --headframe: #4a5468;
+  --void: #f5f2ec;
+  --liner: #7f8796;
+  --pipe: #9aa6b8;
+  --pipe-casing: #5b6576;
+  --machine: #e3e8f0;
+  --machine-edge: #4f5b6e;
+  --hero-sky-top: #cfe2fb;
+  --hero-sky-bottom: #eef4fc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0a0e16;
+    --bg-grad: radial-gradient(1200px 600px at 85% -10%, #12233d 0%, transparent 60%), #0a0e16;
+    --panel: #111723;
+    --panel-2: #0e131d;
+    --panel-glass: rgb(17 23 35 / 0.82);
+    --border: #1f2838;
+    --border-strong: #2c384d;
+    --text: #e8edf5;
+    --text-2: #a8b4c7;
+    --muted: #74829a;
+    --focus: #5598e7;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.7);
+    --accent: #f5a524;
+    --accent-soft: #3a2a0c;
+    --pump: #9085e9;
+    --pump-soft: #241f45;
+    --water: #3987e5;
+    --water-hi: #5fb0ff;
+    --water-deep: #1c5cab;
+    --good: #2fbf4f;
+    --warn: #fab219;
+    --crit: #e66767;
+    --warn-soft: #33270b;
+    --crit-soft: #3a1717;
+    --info-soft: #102236;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --canvas-sky: linear-gradient(180deg, #0b1424 0%, #0d1320 100%);
+    --stratum-top: #221d17;
+    --stratum-deep: #120f0c;
+    --rock-line: rgb(200 170 120 / 0.09);
+    --earth: #3d3226;
+    --grass: #3f6b35;
+    --shaft: #1b1915;
+    --shaft-edge: #2d2a24;
+    --headframe: #8a96ad;
+    --void: #0b0d12;
+    --liner: #56607a;
+    --pipe: #44516a;
+    --pipe-casing: #222a39;
+    --machine: #1d2535;
+    --machine-edge: #6f7d96;
+    --hero-sky-top: #0b1830;
+    --hero-sky-bottom: #12233d;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0a0e16;
+  --bg-grad: radial-gradient(1200px 600px at 85% -10%, #12233d 0%, transparent 60%), #0a0e16;
+  --panel: #111723;
+  --panel-2: #0e131d;
+  --panel-glass: rgb(17 23 35 / 0.82);
+  --border: #1f2838;
+  --border-strong: #2c384d;
+  --text: #e8edf5;
+  --text-2: #a8b4c7;
+  --muted: #74829a;
+  --focus: #5598e7;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.7);
+  --accent: #f5a524;
+  --accent-soft: #3a2a0c;
+  --pump: #9085e9;
+  --pump-soft: #241f45;
+  --water: #3987e5;
+  --water-hi: #5fb0ff;
+  --water-deep: #1c5cab;
+  --good: #2fbf4f;
+  --warn: #fab219;
+  --crit: #e66767;
+  --warn-soft: #33270b;
+  --crit-soft: #3a1717;
+  --info-soft: #102236;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --canvas-sky: linear-gradient(180deg, #0b1424 0%, #0d1320 100%);
+  --stratum-top: #221d17;
+  --stratum-deep: #120f0c;
+  --rock-line: rgb(200 170 120 / 0.09);
+  --earth: #3d3226;
+  --grass: #3f6b35;
+  --shaft: #1b1915;
+  --shaft-edge: #2d2a24;
+  --headframe: #8a96ad;
+  --void: #0b0d12;
+  --liner: #56607a;
+  --pipe: #44516a;
+  --pipe-casing: #222a39;
+  --machine: #1d2535;
+  --machine-edge: #6f7d96;
+  --hero-sky-top: #0b1830;
+  --hero-sky-bottom: #12233d;
+}

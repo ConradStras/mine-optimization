@@ -88,7 +88,12 @@ describe('storage cycle (technical note §4)', () => {
 
   it('multiplies machine, electrical and storage efficiencies when pipes are frictionless', () => {
     const r = simulateCycle(
-      frictionless({ turbine: { flow: 3, efficiency: 0.9 }, pump: { flow: 3, efficiency: 0.9 }, electricalLoss: 0.01, storageLoss: 0.02 }),
+      frictionless({
+        turbine: { flow: 3, efficiency: 0.9 },
+        pump: { flow: 3, efficiency: 0.9 },
+        electricalLoss: 0.01,
+        storageLoss: 0.02,
+      }),
     );
     expect(r.roundTripEfficiency).toBeCloseTo(0.9 * 0.9 * 0.99 * 0.99 * 0.98, 12);
   });

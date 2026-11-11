@@ -105,11 +105,32 @@ export function nodeCost(node: LayoutNode, ctx: CostContext): CostLine {
       return line(node.id, r.label, 'civil', d.volume, 'm³', r.rate, r.fixed);
     }
     case 'reversibleUnit':
-      return line(node.id, 'Reversible pump-turbine', 'mechanical', machineRatingKW(d, ctx.grossHead), 'kW', MACHINE_RATES.reversibleUnit);
+      return line(
+        node.id,
+        'Reversible pump-turbine',
+        'mechanical',
+        machineRatingKW(d, ctx.grossHead),
+        'kW',
+        MACHINE_RATES.reversibleUnit,
+      );
     case 'turbine':
-      return line(node.id, 'Turbine & generator', 'mechanical', machineRatingKW(d, ctx.grossHead), 'kW', MACHINE_RATES.turbine);
+      return line(
+        node.id,
+        'Turbine & generator',
+        'mechanical',
+        machineRatingKW(d, ctx.grossHead),
+        'kW',
+        MACHINE_RATES.turbine,
+      );
     case 'pump':
-      return line(node.id, 'Pump & motor', 'mechanical', machineRatingKW(d, ctx.grossHead), 'kW', MACHINE_RATES.pump);
+      return line(
+        node.id,
+        'Pump & motor',
+        'mechanical',
+        machineRatingKW(d, ctx.grossHead),
+        'kW',
+        MACHINE_RATES.pump,
+      );
     case 'bend':
       return line(node.id, 'Bend', 'piping', 1, 'item', 15_000);
     case 'valve':
@@ -154,7 +175,13 @@ export interface CostSummary {
 }
 
 export function summariseCosts(lines: CostLine[]): CostSummary {
-  const byCategory: Record<CostCategory, number> = { civil: 0, piping: 0, mechanical: 0, electrical: 0, controls: 0 };
+  const byCategory: Record<CostCategory, number> = {
+    civil: 0,
+    piping: 0,
+    mechanical: 0,
+    electrical: 0,
+    controls: 0,
+  };
   for (const l of lines) byCategory[l.category] += l.capex;
   return {
     lines,

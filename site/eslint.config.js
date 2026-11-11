@@ -23,7 +23,19 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': [
         'error',
-        { patterns: ['react', 'react-dom', '@xyflow/*', 'zustand', '../builder/*', '../components/*', '../learn/*', '../pages/*', '../state/*'] },
+        {
+          patterns: [
+            'react',
+            'react-dom',
+            '@xyflow/*',
+            'zustand',
+            '../builder/*',
+            '../components/*',
+            '../learn/*',
+            '../pages/*',
+            '../state/*',
+          ],
+        },
       ],
       'no-restricted-globals': ['error', 'window', 'document', 'localStorage', 'fetch'],
     },

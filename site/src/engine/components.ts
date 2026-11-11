@@ -19,7 +19,13 @@ export interface MaterialSpec {
 
 export const MATERIALS: Record<PipeMaterial, MaterialSpec> = {
   steel: { label: 'Welded steel', roughness: 4.5e-5, modulus: 200e9, costFactor: 1, maxHead: 2000 },
-  ductileIron: { label: 'Ductile iron (cement lined)', roughness: 3e-5, modulus: 170e9, costFactor: 0.9, maxHead: 600 },
+  ductileIron: {
+    label: 'Ductile iron (cement lined)',
+    roughness: 3e-5,
+    modulus: 170e9,
+    costFactor: 0.9,
+    maxHead: 600,
+  },
   grp: { label: 'Glass-reinforced plastic', roughness: 1e-5, modulus: 20e9, costFactor: 0.8, maxHead: 320 },
   hdpe: { label: 'HDPE', roughness: 1.5e-6, modulus: 1e9, costFactor: 0.55, maxHead: 160 },
 };

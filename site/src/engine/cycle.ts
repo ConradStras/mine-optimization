@@ -111,7 +111,11 @@ export function simulateCycle(spec: SystemSpec): CycleResult {
   const losses: LossItem[] = [
     { key: 'transformerIn', label: 'Transformer (in)', kWh: jToKWh(gridIn - atPumpShaft) },
     { key: 'pumpMotor', label: 'Pump & motor', kWh: jToKWh(atPumpShaft * (1 - spec.pump.efficiency)) },
-    { key: 'frictionPump', label: 'Pipe friction (up)', kWh: jToKWh(potentialEnergy(rho, V, pumpHyd.totalLoss)) },
+    {
+      key: 'frictionPump',
+      label: 'Pipe friction (up)',
+      kWh: jToKWh(potentialEnergy(rho, V, pumpHyd.totalLoss)),
+    },
     { key: 'storage', label: 'Seepage & evaporation', kWh: jToKWh(stored - afterStorage) },
     { key: 'frictionGenerate', label: 'Pipe friction (down)', kWh: jToKWh(afterStorage - atTurbine) },
     { key: 'turbineGenerator', label: 'Turbine & generator', kWh: jToKWh(atTurbine - atGenerator) },
@@ -173,7 +177,11 @@ export function diameterSweep(spec: SystemSpec, steps = 40, minFactor = 0.4, max
   for (let i = 0; i <= steps; i++) {
     const k = minFactor + ((maxFactor - minFactor) * i) / steps;
     const scale = (segs: PipeSegment[]) => segs.map((p) => ({ ...p, diameter: p.diameter * k }));
-    const r = simulateCycle({ ...spec, generatePath: scale(spec.generatePath), pumpPath: scale(spec.pumpPath) });
+    const r = simulateCycle({
+      ...spec,
+      generatePath: scale(spec.generatePath),
+      pumpPath: scale(spec.pumpPath),
+    });
     points.push({ x: k, power: r.generate.gridPower, rte: r.roundTripEfficiency });
   }
   return points;

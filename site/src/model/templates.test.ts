@@ -5,14 +5,17 @@ import { TEMPLATES, toLayout } from './templates';
 const template = (id: string) => toLayout(TEMPLATES.find((t) => t.id === id)!);
 
 describe('templates', () => {
-  it.each(TEMPLATES.map((t) => t.id))('%s analyses without errors and lands in the 70–85%% efficiency band', (id) => {
-    const a = analyse(template(id));
-    expect(a.issues.filter((i) => i.severity === 'error')).toEqual([]);
-    expect(a.cycle).toBeDefined();
-    expect(a.pumpAssumed).toBe(false);
-    expect(a.cycle!.roundTripEfficiency).toBeGreaterThan(0.7);
-    expect(a.cycle!.roundTripEfficiency).toBeLessThan(0.85);
-  });
+  it.each(TEMPLATES.map((t) => t.id))(
+    '%s analyses without errors and lands in the 70–85%% efficiency band',
+    (id) => {
+      const a = analyse(template(id));
+      expect(a.issues.filter((i) => i.severity === 'error')).toEqual([]);
+      expect(a.cycle).toBeDefined();
+      expect(a.pumpAssumed).toBe(false);
+      expect(a.cycle!.roundTripEfficiency).toBeGreaterThan(0.7);
+      expect(a.cycle!.roundTripEfficiency).toBeLessThan(0.85);
+    },
+  );
 
   it('reversible template: head comes from reservoir elevations and pipe lengths from geometry', () => {
     const a = analyse(template('reversible'));
@@ -69,7 +72,9 @@ describe('layout checks (warn, never block)', () => {
     const t = template('reversible');
     const turbineOnly: Layout = {
       ...t,
-      nodes: t.nodes.map((n) => (n.id === 'unit' ? { ...n, data: { kind: 'turbine', flow: 6, eta: 0.9 } } : n)),
+      nodes: t.nodes.map((n) =>
+        n.id === 'unit' ? { ...n, data: { kind: 'turbine', flow: 6, eta: 0.9 } } : n,
+      ),
     };
     const a = analyse(turbineOnly);
     expect(a.pumpAssumed).toBe(true);
@@ -79,7 +84,10 @@ describe('layout checks (warn, never block)', () => {
 
   it('flags a pipe that is too narrow', () => {
     const t = template('reversible');
-    const narrow: Layout = { ...t, edges: t.edges.map((e) => ({ ...e, data: { ...e.data, diameter: 0.8 } })) };
+    const narrow: Layout = {
+      ...t,
+      edges: t.edges.map((e) => ({ ...e, data: { ...e.data, diameter: 0.8 } })),
+    };
     const a = analyse(narrow);
     expect(a.issues.some((i) => i.id.startsWith('fast-'))).toBe(true);
     expect(a.cycle!.roundTripEfficiency).toBeLessThan(analyse(t).cycle!.roundTripEfficiency);
@@ -94,7 +102,9 @@ describe('layout checks (warn, never block)', () => {
 
   it('lists every component on the generating route as a dependency of power', () => {
     const a = analyse(template('reversible'));
-    expect(a.dependsOn.power.nodeIds).toEqual(expect.arrayContaining(['upper', 'valve', 'bend', 'unit', 'lower', 'xfmr']));
+    expect(a.dependsOn.power.nodeIds).toEqual(
+      expect.arrayContaining(['upper', 'valve', 'bend', 'unit', 'lower', 'xfmr']),
+    );
     expect(a.dependsOn.grossHead.nodeIds.sort()).toEqual(['lower', 'upper']);
   });
 });
