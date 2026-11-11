@@ -64,12 +64,30 @@ describe('term cards', () => {
     await userEvent.click(screen.getByRole('button', { name: 'head' }));
     const card = screen.getByRole('dialog', { name: 'Head (gross head)' });
     expect(within(card).getByText(/height the water falls/)).toBeInTheDocument();
-    expect(within(card).getByText(/Your system drops 510 m/)).toBeInTheDocument();
+    expect(within(card).getByText(/The water drops 510 m/)).toBeInTheDocument();
     expect(useStore.getState().discovered).toContain('grossHead');
   });
 
   it('every related term points at a term that exists', () => {
     const ids = new Set(TERMS.map((t) => t.id));
     for (const t of TERMS) for (const r of t.related ?? []) expect(ids.has(r), `${t.id} → ${r}`).toBe(true);
+  });
+});
+
+describe('baseline comparison', () => {
+  it('shows how each headline number moved after a change', async () => {
+    render(
+      <AnalysisProvider>
+        <Kpis />
+      </AnalysisProvider>,
+    );
+    await userEvent.click(screen.getByTestId('pin'));
+    expect(useStore.getState().baseline?.['Round-trip efficiency']).toBeCloseTo(76.2, 1);
+    // Narrow every pipe: efficiency must fall and be shown as worse.
+    const { edges, updateEdge } = useStore.getState();
+    const { act } = await import('@testing-library/react');
+    act(() => edges.forEach((e) => updateEdge(e.id, { diameter: 1.0 }, 'diameter')));
+    const kpis = screen.getByTestId('kpis');
+    expect(within(kpis).getAllByText(/▼ .* pts/)[0]).toHaveClass('delta--bad');
   });
 });

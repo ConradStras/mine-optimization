@@ -1,5 +1,9 @@
 # Pump Storage Simulator — requirements and phased build plan
 
+## Status (11 November 2026)
+
+**Phase 1 is built** in [site/](../../site/), as planned below, plus a baseline comparison (pin a design, then see each KPI's change). Every component carries an indicative cost card. The editable cost library and the cash flow model are Phase 2.
+
 ## Context
 
 A professional website of interactive engineering tools for mining. The first tool helps a mining engineer understand and weigh up a **small-to-medium pumped storage hydro (PSH) system built in a disused mine shaft**: upper reservoir at surface, lower reservoir underground, the shaft giving the head.

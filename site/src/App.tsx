@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { Glossary } from './pages/Glossary';
 import { Home } from './pages/Home';
-import { Tool } from './pages/Tool';
 import { AnalysisProvider } from './state/analysis';
 import { useStore } from './state/store';
+
+// The builder (and React Flow) loads only when it is opened, keeping the landing page light.
+const Tool = lazy(() => import('./pages/Tool').then((m) => ({ default: m.Tool })));
 
 export type Route = 'home' | 'pump-storage' | 'glossary';
 
@@ -46,7 +48,11 @@ export function App() {
       <div className={`app app--${route}`}>
         <Header route={route} />
         {route === 'home' && <Home />}
-        {route === 'pump-storage' && <Tool />}
+        {route === 'pump-storage' && (
+          <Suspense fallback={<div className="loading">Loading the builder…</div>}>
+            <Tool />
+          </Suspense>
+        )}
         {route === 'glossary' && <Glossary />}
       </div>
     </AnalysisProvider>

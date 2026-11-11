@@ -16,6 +16,25 @@ interface Tile {
   unit?: string;
   sub?: string;
   tone?: 'gen' | 'pump' | 'good' | 'muted';
+  /** Raw number for comparing with the pinned baseline. */
+  raw?: number;
+  better?: 'up' | 'down';
+  fmtDelta?: (d: number) => string;
+}
+
+function Delta({ t }: { t: Tile }) {
+  const baseline = useStore((s) => s.baseline);
+  const before = baseline?.[t.label];
+  if (before === undefined || t.raw === undefined || !t.fmtDelta) return null;
+  const d = t.raw - before;
+  const rel = before !== 0 ? Math.abs(d / before) : Math.abs(d);
+  if (rel < 0.002) return <span className="delta delta--same">= baseline</span>;
+  const good = t.better === undefined ? undefined : d > 0 === (t.better === 'up');
+  return (
+    <span className={`delta ${good === undefined ? '' : good ? 'delta--good' : 'delta--bad'}`}>
+      {d > 0 ? '▲' : '▼'} {t.fmtDelta(Math.abs(d))}
+    </span>
+  );
 }
 
 function KpiTile({ t }: { t: Tile }) {
@@ -33,6 +52,7 @@ function KpiTile({ t }: { t: Tile }) {
         {t.unit && <span className="kpi__unit">{t.unit}</span>}
       </div>
       {t.sub && <div className="kpi__sub">{t.sub}</div>}
+      <Delta t={t} />
       {t.metric && (
         <button
           className="kpi__trace"
@@ -50,6 +70,8 @@ function KpiTile({ t }: { t: Tile }) {
 export function Kpis() {
   const { analysis } = useAnalysis();
   const m = useMoney();
+  const baseline = useStore((s) => s.baseline);
+  const setBaseline = useStore((s) => s.setBaseline);
   const c = analysis.cycle;
   const gen = power(c?.generate.gridPower);
   const pmp = power(c && !analysis.pumpAssumed ? c.pump.gridPower : undefined);
@@ -63,6 +85,9 @@ export function Kpis() {
       unit: gen.unit,
       sub: 'at the grid',
       tone: 'gen',
+      raw: c ? c.generate.gridPower / 1e6 : undefined,
+      better: 'up',
+      fmtDelta: (d) => `${num(d, 1)} MW`,
     },
     {
       metric: 'pumpPower',
@@ -72,6 +97,8 @@ export function Kpis() {
       unit: pmp.unit,
       sub: analysis.pumpAssumed ? 'needs a pumping route' : 'drawn from the grid',
       tone: 'pump',
+      raw: c && !analysis.pumpAssumed ? c.pump.gridPower / 1e6 : undefined,
+      fmtDelta: (d) => `${num(d, 1)} MW`,
     },
     {
       metric: 'storedEnergy',
@@ -80,6 +107,9 @@ export function Kpis() {
       value: stored.value,
       unit: stored.unit,
       sub: 'delivered to the grid',
+      raw: c ? c.gridEnergyOut / 1000 : undefined,
+      better: 'up',
+      fmtDelta: (d) => `${num(d, 1)} MWh`,
     },
     {
       metric: 'duration',
@@ -87,6 +117,8 @@ export function Kpis() {
       label: 'Duration',
       value: c ? hours(c.generate.hours) : '—',
       sub: 'at full power',
+      raw: c?.generate.hours,
+      fmtDelta: (d) => hours(d),
     },
     {
       metric: 'roundTripEfficiency',
@@ -96,6 +128,9 @@ export function Kpis() {
       unit: '%',
       sub: 'typical small PSH: 70–80%',
       tone: 'good',
+      raw: c && !analysis.pumpAssumed ? c.roundTripEfficiency * 100 : undefined,
+      better: 'up',
+      fmtDelta: (d) => `${num(d, 1)} pts`,
     },
     {
       metric: 'netHead',
@@ -107,6 +142,9 @@ export function Kpis() {
         analysis.grossHead > 0
           ? `of ${metres(analysis.grossHead)} gross · ${pct(c?.hydraulicEfficiencyGenerate)}`
           : undefined,
+      raw: c?.generate.machineHead,
+      better: 'up',
+      fmtDelta: (d) => `${num(d, 1)} m`,
     },
     {
       metric: 'capex',
@@ -114,6 +152,9 @@ export function Kpis() {
       label: 'Capital cost',
       value: money(analysis.costs.totalCapex, m),
       sub: `${money(analysis.costs.totalOmPerYear, m)} O&M / year`,
+      raw: analysis.costs.totalCapex,
+      better: 'down',
+      fmtDelta: (d) => money(d, m),
     },
     {
       termId: 'costPerKW',
@@ -121,13 +162,42 @@ export function Kpis() {
       value: analysis.capexPerKW ? money(analysis.capexPerKW, m, 0) : '—',
       sub: analysis.capexPerKWh ? `${money(analysis.capexPerKWh, m, 0)} per kWh stored` : undefined,
       tone: 'muted',
+      raw: analysis.capexPerKW,
+      better: 'down',
+      fmtDelta: (d) => money(d, m, 0),
     },
   ];
+  const pin = () =>
+    setBaseline(Object.fromEntries(tiles.filter((t) => t.raw !== undefined).map((t) => [t.label, t.raw!])));
   return (
-    <div className="kpis" data-testid="kpis">
-      {tiles.map((t) => (
-        <KpiTile key={t.label} t={t} />
-      ))}
+    <div className="kpi-block">
+      <div className="kpi-block__bar">
+        {baseline ? (
+          <>
+            <span className="kpi-block__note">
+              <span className="dot dot--pin" /> Comparing with your pinned design
+            </span>
+            <button className="btn btn--ghost btn--sm" onClick={pin}>
+              Re-pin
+            </button>
+            <button className="btn btn--ghost btn--sm" onClick={() => setBaseline(null)}>
+              Clear
+            </button>
+          </>
+        ) : (
+          <>
+            <span className="kpi-block__note">Try a change and compare it with this design.</span>
+            <button className="btn btn--ghost btn--sm" onClick={pin} disabled={!c} data-testid="pin">
+              Pin as baseline
+            </button>
+          </>
+        )}
+      </div>
+      <div className="kpis" data-testid="kpis">
+        {tiles.map((t) => (
+          <KpiTile key={t.label} t={t} />
+        ))}
+      </div>
     </div>
   );
 }

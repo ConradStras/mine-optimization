@@ -53,8 +53,12 @@ describe('store', () => {
 
   it('does not lay a second pipe between the same two components', () => {
     const n = useStore.getState().edges.length;
-    useStore.getState().onConnect({ source: 'unit', target: 'lower', sourceHandle: null, targetHandle: null });
-    useStore.getState().onConnect({ source: 'lower', target: 'unit', sourceHandle: null, targetHandle: null });
+    useStore
+      .getState()
+      .onConnect({ source: 'unit', target: 'lower', sourceHandle: null, targetHandle: null });
+    useStore
+      .getState()
+      .onConnect({ source: 'lower', target: 'unit', sourceHandle: null, targetHandle: null });
     expect(useStore.getState().edges).toHaveLength(n);
   });
 

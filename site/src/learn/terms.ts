@@ -63,7 +63,7 @@ export const TERMS: Term[] = [
     ],
     animation: 'head',
     metric: 'grossHead',
-    live: (a) => (a.grossHead > 0 ? `Your system drops ${metres(a.grossHead)}.` : undefined),
+    live: (a) => (a.grossHead > 0 ? `The water drops ${metres(a.grossHead)}.` : undefined),
     related: ['potentialEnergy', 'netHead'],
   },
   {
@@ -85,7 +85,7 @@ export const TERMS: Term[] = [
     metric: 'storedEnergy',
     live: (a) =>
       a.grossHead > 0
-        ? `Each m³ falling ${metres(a.grossHead)} holds ${num((9.81 * a.grossHead) / 3600, 2)} kWh.${a.cycle ? ` Your full reservoir holds ${mwh(a.cycle.storedEnergy)}.` : ''}`
+        ? `Each m³ falling ${metres(a.grossHead)} holds ${num((9.81 * a.grossHead) / 3600, 2)} kWh.${a.cycle ? ` The full reservoir holds ${mwh(a.cycle.storedEnergy)}.` : ''}`
         : undefined,
     related: ['grossHead', 'usableVolume', 'powerEnergy'],
   },
@@ -126,7 +126,7 @@ export const TERMS: Term[] = [
       { sym: 'v', meaning: 'water velocity', unit: 'm/s' },
       { sym: 'A', meaning: 'pipe cross-section, πD²/4', unit: 'm²' },
     ],
-    live: (a) => (a.cycle ? `Your turbine passes ${num(a.cycle.generate.flow, 1)} m³/s.` : undefined),
+    live: (a) => (a.cycle ? `The turbine passes ${num(a.cycle.generate.flow, 1)} m³/s.` : undefined),
     related: ['velocity', 'headLoss'],
   },
   {
@@ -210,7 +210,7 @@ export const TERMS: Term[] = [
     metric: 'netHead',
     live: (a) =>
       a.cycle
-        ? `Your turbine sees ${metres(a.cycle.generate.machineHead, 1)}: ${pct(a.cycle.hydraulicEfficiencyGenerate)} of the drop.`
+        ? `The turbine sees ${metres(a.cycle.generate.machineHead, 1)}: ${pct(a.cycle.hydraulicEfficiencyGenerate)} of the drop.`
         : undefined,
     related: ['headLoss', 'grossHead'],
   },
@@ -231,7 +231,7 @@ export const TERMS: Term[] = [
     ],
     animation: 'turbine',
     metric: 'power',
-    live: (a) => (a.cycle ? `Your plant delivers ${mw(a.cycle.generate.gridPower)} to the grid.` : undefined),
+    live: (a) => (a.cycle ? `The plant delivers ${mw(a.cycle.generate.gridPower)} to the grid.` : undefined),
     related: ['netHead', 'reversibleUnit'],
   },
   {
@@ -265,7 +265,7 @@ export const TERMS: Term[] = [
     metric: 'pumpPower',
     live: (a) =>
       a.cycle && !a.pumpAssumed
-        ? `Your pump works against ${metres(a.cycle.pump.machineHead, 1)} and draws ${mw(a.cycle.pump.gridPower)}.`
+        ? `The pump works against ${metres(a.cycle.pump.machineHead, 1)} and draws ${mw(a.cycle.pump.gridPower)}.`
         : undefined,
     related: ['pump', 'headLoss'],
   },
@@ -293,7 +293,7 @@ export const TERMS: Term[] = [
     metric: 'roundTripEfficiency',
     live: (a) =>
       a.cycle && !a.pumpAssumed
-        ? `Your system returns ${pct(a.cycle.roundTripEfficiency)} of what it takes in.`
+        ? `It returns ${pct(a.cycle.roundTripEfficiency)} of what it takes in.`
         : undefined,
     related: ['headLoss', 'turbine', 'pump', 'seepage'],
   },
@@ -306,7 +306,7 @@ export const TERMS: Term[] = [
       'Duration is the energy stored divided by the power: the time to empty the upper reservoir at full flow. Pumped storage suits several hours (evening peaks, overnight); batteries suit shorter, sharper bursts.',
     equation: 't = V / Q',
     metric: 'duration',
-    live: (a) => (a.cycle ? `Your plant runs ${hours(a.cycle.generate.hours)} at full power.` : undefined),
+    live: (a) => (a.cycle ? `The plant runs ${hours(a.cycle.generate.hours)} at full power.` : undefined),
     related: ['powerEnergy'],
   },
   {

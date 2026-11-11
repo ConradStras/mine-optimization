@@ -27,7 +27,8 @@ export function GuidePanel() {
   const done = current ? current.done(ctx) : true;
 
   // The moment a step is achieved, play its explainer on the user's own system.
-  const celebrated = useRef<number>(-1);
+  // A step already done when the panel mounts (e.g. after a reload) is not celebrated again.
+  const celebrated = useRef<number>(done ? step : -1);
   useEffect(() => {
     if (current && done && celebrated.current !== step) {
       celebrated.current = step;

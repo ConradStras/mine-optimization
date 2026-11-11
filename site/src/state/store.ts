@@ -86,6 +86,8 @@ interface State {
   theme: Theme;
   panelTab: PanelTab;
   layers: { flowLabels: boolean; frictionHeat: boolean };
+  /** Headline numbers of a pinned design, to compare against. */
+  baseline: Record<string, number> | null;
   templateId: string | null;
   /** The expert layout, kept while the guided build uses an empty mine. */
   stash: Snapshot | null;
@@ -120,6 +122,7 @@ interface State {
   setTheme: (t: Theme) => void;
   setPanelTab: (t: PanelTab) => void;
   toggleLayer: (l: keyof State['layers']) => void;
+  setBaseline: (b: Record<string, number> | null) => void;
 }
 
 let counter = 0;
@@ -217,6 +220,7 @@ export const useStore = create<State>()(
       theme: 'system',
       panelTab: 'results',
       layers: { flowLabels: true, frictionHeat: false },
+      baseline: null,
       templateId: firstTemplate.id,
       stash: null,
       undoClear: null,
@@ -432,6 +436,7 @@ export const useStore = create<State>()(
       setTheme: (theme) => set({ theme }),
       setPanelTab: (panelTab) => set({ panelTab }),
       toggleLayer: (l) => set((s) => ({ layers: { ...s.layers, [l]: !s.layers[l] } })),
+      setBaseline: (baseline) => set({ baseline }),
     }),
     {
       name: 'shaftline.pumpStorage.v1',
@@ -456,6 +461,7 @@ export const useStore = create<State>()(
         usableFraction: s.usableFraction,
         theme: s.theme,
         layers: s.layers,
+        baseline: s.baseline,
         templateId: s.templateId,
         mode: s.mode,
         stash: s.stash

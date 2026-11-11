@@ -44,7 +44,6 @@ export function Header({ route }: { route: string }) {
               aria-checked={guideMode === 'guided'}
               className={guideMode === 'guided' ? 'is-on' : ''}
               onClick={() => setGuideMode('guided')}
-              title="A step-by-step build in an empty mine. Your current layout comes back when you switch to Expert."
               data-testid="mode-guided"
             >
               Guided
